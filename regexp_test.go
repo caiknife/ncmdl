@@ -9,18 +9,18 @@ import (
 
 var (
 	albumURLs = types.Slice[string]{
-		"https://music.163.com/#/album?id=123837273",
 		"https://music.163.com/album?id=195093556&userid=757014",
+		"https://music.163.com/#/album?id=123837273",
 	}
 
 	playlistURLs = types.Slice[string]{
-		"https://music.163.com/#/playlist?id=6623715587",
 		"https://music.163.com/playlist?id=7350047928&userid=757014",
+		"https://music.163.com/#/playlist?id=6623715587",
 	}
 
 	singleURLs = types.Slice[string]{
-		"https://music.163.com/#/song?id=1824625066",
 		"https://music.163.com/song?id=2153793701&userid=757014",
+		"https://music.163.com/#/song?id=1824625066",
 	}
 
 	unMatchURLs = types.Slice[string]{
@@ -30,25 +30,25 @@ var (
 	}
 )
 
-func Test_regexp(t *testing.T) {
+func TestIsAlbumLink(t *testing.T) {
 	albumURLs.ForEach(func(s string, i int) {
-		assert.True(t, IsAlbumLink(s))
-		v := albumRegexp.FindStringSubmatch(s)
-		t.Log(len(v), v)
+		assert.Equal(t, true, IsAlbumLink(s))
 	})
+}
 
+func TestIsPlaylistLink(t *testing.T) {
 	playlistURLs.ForEach(func(s string, i int) {
-		assert.True(t, IsPlaylistLink(s))
-		v := playlistRegexp.FindStringSubmatch(s)
-		t.Log(len(v), v)
+		assert.Equal(t, true, IsPlaylistLink(s))
 	})
+}
 
+func TestIsSingleLink(t *testing.T) {
 	singleURLs.ForEach(func(s string, i int) {
 		assert.True(t, IsSingleLink(s))
-		v := singleRegexp.FindStringSubmatch(s)
-		t.Log(len(v), v)
 	})
+}
 
+func TestNotMatch(t *testing.T) {
 	unMatchURLs.ForEach(func(s string, i int) {
 		assert.False(t, IsSingleLink(s))
 		assert.False(t, IsAlbumLink(s))

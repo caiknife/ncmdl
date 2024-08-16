@@ -26,6 +26,12 @@ func newApp() *cli.App {
 				Usage:   "Cookie文件名",
 				Value:   "",
 			},
+			&cli.BoolFlag{
+				Name:    "dryrun",
+				Aliases: []string{"d"},
+				Usage:   "演习模式",
+				Value:   false,
+			},
 		},
 		Action: action(),
 	}
@@ -52,13 +58,17 @@ func action() cli.ActionFunc {
 			cookie = dir + "/ncm.txt"
 		}
 		cookieFile := NewCookieFile(cookie)
+		dryRun := c.Bool("dryrun")
 		inputLinks.ForEach(func(s string, i int) {
-			link, err := NewLink(s, cookieFile)
+			link, err := NewLink(s, cookieFile, dryRun)
 			if err != nil {
 				logger.ConsoleLogger.Errorln(err)
 				return
 			}
-			logger.ConsoleLogger.Infoln(link)
+			err = link.Download()
+			if err != nil {
+				logger.ConsoleLogger.Errorln(err)
+			}
 		})
 		return nil
 	}

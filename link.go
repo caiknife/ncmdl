@@ -5,6 +5,7 @@ import (
 
 	"github.com/XiaoMengXinX/Music163Api-Go/utils"
 	"github.com/caiknife/mp3lister/lib/fjson"
+	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
 )
 
@@ -21,6 +22,7 @@ type Link struct {
 	Url        string      `json:"url"`
 	ID         int         `json:"id"`
 	CookieFile *CookieFile `json:"cookie_file"`
+	DryRun     bool        `json:"dry_run"`
 }
 
 func (l *Link) String() string {
@@ -33,14 +35,14 @@ const (
 	ErrLinkIDNotMatch   types.Error = "链接无法匹配ID"
 )
 
-func NewLink(url string, cookieFile *CookieFile) (l *Link, err error) {
+func NewLink(url string, cookieFile *CookieFile, dryRun bool) (l *Link, err error) {
 	switch {
 	case IsSingleLink(url):
-		l = &Link{Type: Single, Url: url, CookieFile: cookieFile}
+		l = &Link{Type: Single, Url: url, CookieFile: cookieFile, DryRun: dryRun}
 	case IsAlbumLink(url):
-		l = &Link{Type: Album, Url: url, CookieFile: cookieFile}
+		l = &Link{Type: Album, Url: url, CookieFile: cookieFile, DryRun: dryRun}
 	case IsPlaylistLink(url):
-		l = &Link{Type: Playlist, Url: url, CookieFile: cookieFile}
+		l = &Link{Type: Playlist, Url: url, CookieFile: cookieFile, DryRun: dryRun}
 	default:
 		return nil, ErrLinkTypeNotMatch
 	}
@@ -69,6 +71,11 @@ func (l *Link) id() (err error) {
 }
 
 func (l *Link) Download() (err error) {
+	if l.DryRun {
+		logger.ConsoleLogger.Infoln("当前是演习模式，要解析的URL是", l.Url)
+		logger.ConsoleLogger.Infoln("退出程序，不进行下载")
+		return
+	}
 	switch l.Type {
 	case Single:
 		return DownloadSingle(l.ID, "./")

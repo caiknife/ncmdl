@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	albumRegexp    = regexp.MustCompile(`^https://music.163.com/(#/)?album\?id=(\d+)`)
-	playlistRegexp = regexp.MustCompile(`^https://music.163.com/(#/)?playlist\?id=(\d+)`)
-	singleRegexp   = regexp.MustCompile(`^https://music.163.com/(#/)?song\?id=(\d+)`)
+	playlistRegexp = regexp.MustCompile(`^https://music\.163\.com/(#/)?playlist\?id=(\d+)`)
+	albumRegexp    = regexp.MustCompile(`^https://music\.163\.com/(#/)?album\?id=(\d+)`)
+	singleRegexp   = regexp.MustCompile(`^https://music\.163\.com/(#/)?song\?id=(\d+)`)
 )
 
 const (
@@ -44,7 +44,7 @@ func AlbumLinkID(s string) (int, error) {
 }
 
 func IsPlaylistLink(s string) bool {
-	return albumRegexp.MatchString(s)
+	return playlistRegexp.MatchString(s)
 }
 
 func PlaylistLinkID(s string) (int, error) {
