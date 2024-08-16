@@ -25,6 +25,10 @@ func (s *Single) CoverURL() string {
 	return s.Album.PicURL
 }
 
+func (s *Single) FileName() string {
+	return s.Artist[0].Name + " - " + s.Name + ".mp3"
+}
+
 func (s *Single) SaveFileName() string {
-	return s.SavePath() + "/" + s.Artist[0].Name + " - " + s.Name + ".mp3"
+	return s.SavePath() + "/" + s.FileName()
 }

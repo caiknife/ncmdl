@@ -6,6 +6,7 @@ import (
 	"github.com/XiaoMengXinX/Music163Api-Go/api"
 	"github.com/bogem/id3v2/v2"
 	"github.com/caiknife/mp3lister/lib/fjson"
+	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
 	"github.com/duke-git/lancet/v2/fileutil"
 	"github.com/duke-git/lancet/v2/netutil"
@@ -14,18 +15,12 @@ import (
 )
 
 const (
-	br128 = 128000
-	br192 = 192000
-	br256 = 256000
-	br320 = 320000
-	br999 = 999000
-)
-const (
-	ErrSongDetailIsEmpty   types.Error = "单曲详情为空"
-	ErrSongDownloadIsEmpty types.Error = "单曲下载链接为空"
+	ErrSongDetailIsEmpty types.Error = "单曲详情为空"
+	ErrSongDownload      types.Error = "解析歌单歌曲下载链接异常"
 )
 
 func writeTag(filePath string, single *entity.Single) error {
+	logger.ConsoleLogger.Infoln("正在写入标签", single.FileName())
 	open, err := id3v2.Open(filePath, id3v2.Options{Parse: true})
 	if err != nil {
 		return err
@@ -68,11 +63,17 @@ func downloadFile(url string, single *entity.Single, destDir string) error {
 			return err
 		}
 	}
-	err := netutil.DownloadFile(destDir+single.SaveFileName(), url)
+	mp3file := destDir + single.SaveFileName()
+	if fileutil.IsExist(mp3file) {
+		logger.ConsoleLogger.Warnln(single.FileName(), "文件已经存在")
+		return nil
+	}
+	logger.ConsoleLogger.Infoln("开始下载文件", single.FileName())
+	err := netutil.DownloadFile(mp3file, url)
 	if err != nil {
 		return err
 	}
-	err = writeTag(destDir+single.SaveFileName(), single)
+	err = writeTag(mp3file, single)
 	if err != nil {
 		return err
 	}
@@ -85,25 +86,15 @@ func DownloadSingle(singleID int, destDir string) (err error) {
 		return err
 	}
 	songIDs := []int{detail[0].ID}
-	url, err := api.GetSongURL(*GetRequestData(), api.SongURLConfig{
-		EncodeType: "",
-		Level:      "higher",
-		Ids:        songIDs,
-	})
+	info, err := downloadInfo(songIDs)
 	if err != nil {
 		return err
 	}
-	d := &entity.DownloadResult{}
-	err = fjson.UnmarshalFromString(url.RawJson, d)
-	if err != nil {
-		return err
+	if info.IsEmpty() {
+		return ErrSongDownload
 	}
-	if d.Data.IsEmpty() {
-		return ErrSongDownloadIsEmpty
-	}
-	e := d.Data[0].URL
 
-	err = downloadFile(e, detail[0], destDir)
+	err = asyncDownload(info, detail, destDir)
 	if err != nil {
 		return err
 	}
@@ -112,6 +103,7 @@ func DownloadSingle(singleID int, destDir string) (err error) {
 }
 
 func SingleDetail(singleID int) (result types.Slice[*entity.Single], err error) {
+	logger.ConsoleLogger.Infoln("正在解析单曲，ID:", singleID)
 	detail, err := api.GetSongDetail(*GetRequestData(), []int{singleID})
 	if err != nil {
 		return nil, err

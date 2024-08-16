@@ -73,9 +73,9 @@ func (l *Link) Download() (err error) {
 	case Single:
 		return DownloadSingle(l.ID, "./")
 	case Album:
-		return DownloadAlbum(l.ID)
+		return DownloadAlbum(l.ID, "./")
 	case Playlist:
-		return DownloadPlaylist(l.ID)
+		return DownloadPlaylist(l.ID, "./")
 	}
 	return nil
 }

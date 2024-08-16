@@ -2,15 +2,31 @@ package main
 
 import (
 	"testing"
-
-	"github.com/XiaoMengXinX/Music163Api-Go/api"
 )
 
-func Test_playlist_detail(t *testing.T) {
-	detail, err := api.GetPlaylistDetail(*reqData, 6623715587)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Log(detail.RawJson)
+func TestPlaylistDetail(t *testing.T) {
+	playlistURLs.ForEach(func(s string, i int) {
+		id, err := PlaylistLinkID(s)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		detail, err := PlaylistDetail(id)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		t.Log(detail)
+	})
+}
+
+func TestDownloadPlaylist(t *testing.T) {
+	playlistURLs.ForEach(func(s string, i int) {
+		id, err := PlaylistLinkID(s)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		err = DownloadPlaylist(id, "./tmp/")
+	})
 }
