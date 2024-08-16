@@ -4,6 +4,7 @@ go 1.22
 
 require (
 	github.com/XiaoMengXinX/Music163Api-Go v0.1.30
+	github.com/bogem/id3v2/v2 v2.1.4
 	github.com/caiknife/mp3lister v1.1.8
 	github.com/duke-git/lancet/v2 v2.3.2
 	github.com/samber/lo v1.46.0
@@ -13,7 +14,6 @@ require (
 )
 
 require (
-	github.com/bogem/id3v2/v2 v2.1.4 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang-module/carbon/v2 v2.3.12 // indirect

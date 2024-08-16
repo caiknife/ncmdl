@@ -71,7 +71,7 @@ func (l *Link) id() (err error) {
 func (l *Link) Download() (err error) {
 	switch l.Type {
 	case Single:
-		return DownloadSingle(l.ID)
+		return DownloadSingle(l.ID, "./")
 	case Album:
 		return DownloadAlbum(l.ID)
 	case Playlist:
