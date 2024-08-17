@@ -9,6 +9,12 @@ import (
 )
 
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			logger.ConsoleLogger.Fatalln("程序发生了异常", r)
+		}
+	}()
+
 	if err := newApp().Run(os.Args); err != nil {
 		logger.ConsoleLogger.Fatalln(err)
 		return
@@ -65,6 +71,7 @@ func action() cli.ActionFunc {
 				logger.ConsoleLogger.Errorln(err)
 				return
 			}
+			SetRequestDataCookie(link.CookieFile.ToHttpCookie())
 			err = link.Download()
 			if err != nil {
 				logger.ConsoleLogger.Errorln(err)

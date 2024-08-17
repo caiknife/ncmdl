@@ -3,15 +3,17 @@ package main
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/caiknife/mp3lister/lib/fjson"
+	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
 	"github.com/duke-git/lancet/v2/fileutil"
-	"github.com/samber/lo"
+	"github.com/spf13/cast"
 )
 
 type CookieFile struct {
-	Values types.Map[string] `json:"values"`
+	Values types.Slice[*http.Cookie] `json:"values"`
 }
 
 func (c *CookieFile) String() string {
@@ -27,18 +29,16 @@ func (c *CookieFile) ToHttpCookie() (cookie types.Slice[*http.Cookie]) {
 	if c.IsEmpty() {
 		return cookie
 	}
-	cookie = lo.MapToSlice[string, string, *http.Cookie](c.Values, func(key string, value string) *http.Cookie {
-		return &http.Cookie{
-			Name:  key,
-			Value: value,
-		}
-	})
-	return cookie
+	return c.Values
 }
+
+const (
+	ErrCookieFile = "cookies文件格式异常"
+)
 
 func NewCookieFile(cookieFile string) *CookieFile {
 	c := &CookieFile{
-		Values: types.Map[string]{},
+		Values: types.Slice[*http.Cookie]{},
 	}
 	if cookieFile == "" {
 		return c
@@ -52,7 +52,21 @@ func NewCookieFile(cookieFile string) *CookieFile {
 			continue
 		}
 		split := strings.Split(s, "\t")
-		c.Values[split[5]] = split[6]
+		if len(split) != 7 {
+			panic(ErrCookieFile)
+		}
+
+		c.Values = append(c.Values, &http.Cookie{
+			Name:     split[5],
+			Value:    split[6],
+			Path:     split[2],
+			Domain:   split[0],
+			Expires:  time.Unix(int64(cast.ToInt(split[4])), 0),
+			MaxAge:   cast.ToInt(split[4]),
+			Secure:   split[3] == "TRUE",
+			SameSite: http.SameSiteLaxMode,
+		})
 	}
+	logger.ConsoleLogger.Infoln("已经加载cookies文件", cookieFile)
 	return c
 }

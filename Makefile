@@ -2,7 +2,7 @@
 
 build:
 	go mod tidy
-	go build -ldflags="-s -w" -tags=jsoniter -o ./dist/ncmdl
+	go build -ldflags="-s -w" -tags=jsoniter -o ./out/ncmdl
 
 test:
 	go test ./...
