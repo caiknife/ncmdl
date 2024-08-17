@@ -8,7 +8,7 @@ import (
 
 func TestNewLink(t *testing.T) {
 	singleURLs.ForEach(func(s string, i int) {
-		v, err := NewLink(s, NewCookieFile(ncmCookieFile))
+		v, err := NewLink(s, NewCookieFile(ncmCookieFile), false)
 		assert.NoError(t, err)
 		t.Log(v)
 	})
