@@ -20,7 +20,7 @@ func DownloadSingle(singleID int, destDir string) (err error) {
 		return err
 	}
 	songIDs := []int{detail[0].ID}
-	info, err := downloadInfo(songIDs)
+	info, err := DownloadInfo(songIDs)
 	if err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func DownloadSingle(singleID int, destDir string) (err error) {
 		return ErrSongDownload
 	}
 
-	err = asyncDownload(info, detail, destDir)
+	err = AsyncDownload(info, detail, destDir)
 	if err != nil {
 		return err
 	}

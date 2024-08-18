@@ -24,12 +24,12 @@ func TestDownloadSingle(t *testing.T) {
 	singleURLs.ForEach(func(s string, i int) {
 		id, err := SingleLinkID(s)
 		if err != nil {
-			t.Error(err)
+			t.Errorf("%+v\n", err)
 			return
 		}
-		err = DownloadSingle(id, "./tmp/")
+		err = DownloadSingle(id, Path("./tmp/"))
 		if err != nil {
-			t.Error(err)
+			t.Errorf("%+v\n", err)
 			return
 		}
 	})

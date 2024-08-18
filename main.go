@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
@@ -61,7 +62,7 @@ func action() cli.ActionFunc {
 			if err != nil {
 				return err
 			}
-			cookie = dir + "/ncm.txt"
+			cookie = filepath.Join(dir, "ncm.txt")
 		}
 		cookieFile := NewCookieFile(cookie)
 		dryRun := c.Bool("dryrun")

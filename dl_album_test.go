@@ -12,7 +12,7 @@ func TestDownloadAlbum(t *testing.T) {
 			return
 		}
 
-		err = DownloadAlbum(id, "./tmp/")
+		err = DownloadAlbum(id, Path("./tmp/"))
 		if err != nil {
 			t.Error(err)
 			return

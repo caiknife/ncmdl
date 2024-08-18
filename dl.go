@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"path/filepath"
 	"sync"
 
 	"github.com/XiaoMengXinX/Music163Api-Go/api"
@@ -16,7 +17,7 @@ import (
 	"github.com/caiknife/ncmdl/entity"
 )
 
-func downloadInfo(songIDs []int) (r types.Slice[*entity.Download], err error) {
+func DownloadInfo(songIDs []int) (r types.Slice[*entity.Download], err error) {
 	url, err := api.GetSongURL(*GetRequestData(), api.SongURLConfig{
 		EncodeType: "",
 		Level:      "higher",
@@ -33,7 +34,7 @@ func downloadInfo(songIDs []int) (r types.Slice[*entity.Download], err error) {
 	return d.Data, nil
 }
 
-func asyncDownload(downloads types.Slice[*entity.Download], songs types.Slice[*entity.Single], destDir string) error {
+func AsyncDownload(downloads types.Slice[*entity.Download], songs types.Slice[*entity.Single], destDir string) error {
 	pool, err := ants.NewPool(defaultPoolSize)
 	if err != nil {
 		return err
@@ -44,7 +45,7 @@ func asyncDownload(downloads types.Slice[*entity.Download], songs types.Slice[*e
 		wg.Add(1)
 		err := pool.Submit(func() {
 			defer wg.Done()
-			err := downloadFile(downloads[i].URL, single, destDir)
+			err := DownloadFile(downloads[i].URL, single, destDir)
 			if err != nil {
 				logger.ConsoleLogger.Errorln(err)
 				return
@@ -58,7 +59,7 @@ func asyncDownload(downloads types.Slice[*entity.Download], songs types.Slice[*e
 	return nil
 }
 
-func writeTag(filePath string, single *entity.Single) error {
+func WriteTag(filePath string, single *entity.Single) error {
 	logger.ConsoleLogger.Infoln("正在写入标签", single.FileName())
 	open, err := id3v2.Open(filePath, id3v2.Options{Parse: true})
 	if err != nil {
@@ -94,15 +95,15 @@ func writeTag(filePath string, single *entity.Single) error {
 	return nil
 }
 
-func downloadFile(url string, single *entity.Single, destDir string) error {
-	path := destDir + single.SavePath()
+func DownloadFile(url string, single *entity.Single, destDir string) error {
+	path := filepath.Join(destDir, single.SavePath())
 	if !fileutil.IsExist(path) {
-		err := fileutil.CreateDir("./" + path)
+		err := fileutil.CreateDir(path)
 		if err != nil {
 			return err
 		}
 	}
-	mp3file := destDir + single.SaveFileName()
+	mp3file := filepath.Join(destDir, single.SaveFileName())
 	if fileutil.IsExist(mp3file) {
 		logger.ConsoleLogger.Warnln(single.FileName(), "文件已经存在")
 		return nil
@@ -112,9 +113,17 @@ func downloadFile(url string, single *entity.Single, destDir string) error {
 	if err != nil {
 		return err
 	}
-	err = writeTag(mp3file, single)
+	err = WriteTag(mp3file, single)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func Path(destDir string) string {
+	abs, err := filepath.Abs(destDir)
+	if err != nil {
+		return "."
+	}
+	return abs
 }

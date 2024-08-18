@@ -1,6 +1,9 @@
 package entity
 
 import (
+	"fmt"
+	"path/filepath"
+
 	"github.com/caiknife/mp3lister/lib/fjson"
 	"github.com/caiknife/mp3lister/lib/types"
 )
@@ -18,7 +21,7 @@ func (s *Single) String() string {
 }
 
 func (s *Single) SavePath() string {
-	return s.Artist[0].Name + "/" + s.Album.Name
+	return filepath.Join(s.Artist[0].Name, s.Album.Name)
 }
 
 func (s *Single) CoverURL() string {
@@ -26,9 +29,9 @@ func (s *Single) CoverURL() string {
 }
 
 func (s *Single) FileName() string {
-	return s.Artist[0].Name + " - " + s.Name + ".mp3"
+	return fmt.Sprintf("%s - %s.mp3", s.Artist[0].Name, s.Album.Name)
 }
 
 func (s *Single) SaveFileName() string {
-	return s.SavePath() + "/" + s.FileName()
+	return filepath.Join(s.SavePath(), s.FileName())
 }

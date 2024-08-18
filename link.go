@@ -78,11 +78,11 @@ func (l *Link) Download() (err error) {
 	}
 	switch l.Type {
 	case Single:
-		return DownloadSingle(l.ID, "./")
+		return DownloadSingle(l.ID, Path("./"))
 	case Album:
-		return DownloadAlbum(l.ID, "./")
+		return DownloadAlbum(l.ID, Path("./"))
 	case Playlist:
-		return DownloadPlaylist(l.ID, "./")
+		return DownloadPlaylist(l.ID, Path("./"))
 	}
 	return nil
 }

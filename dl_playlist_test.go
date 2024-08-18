@@ -27,6 +27,6 @@ func TestDownloadPlaylist(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		err = DownloadPlaylist(id, "./tmp/")
+		err = DownloadPlaylist(id, Path("./tmp/"))
 	})
 }

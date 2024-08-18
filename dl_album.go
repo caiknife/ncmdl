@@ -23,7 +23,7 @@ func DownloadAlbum(albumID int, destDir string) (err error) {
 	songIDs := lo.Map[*entity.Single, int](detail, func(item *entity.Single, index int) int {
 		return item.ID
 	})
-	info, err := downloadInfo(songIDs)
+	info, err := DownloadInfo(songIDs)
 	if err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func DownloadAlbum(albumID int, destDir string) (err error) {
 		return ErrAlbumDownload
 	}
 
-	err = asyncDownload(info, detail, destDir)
+	err = AsyncDownload(info, detail, destDir)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func DownloadAlbum(albumID int, destDir string) (err error) {
 
 func AlbumDetail(albumID int) (r types.Slice[*entity.Single], err error) {
 	logger.ConsoleLogger.Infoln("正在解析专辑，ID:", albumID)
-	detail, err := api.GetAlbumDetail(*reqData, albumID)
+	detail, err := api.GetAlbumDetail(*GetRequestData(), albumID)
 	if err != nil {
 		return nil, err
 	}
