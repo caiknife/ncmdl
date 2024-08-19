@@ -5,6 +5,7 @@ import (
 	"github.com/caiknife/mp3lister/lib/fjson"
 	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
+	"github.com/pkg/errors"
 
 	"github.com/caiknife/ncmdl/entity"
 )
@@ -17,11 +18,13 @@ const (
 func DownloadSingle(singleID int, destDir string) (err error) {
 	detail, err := SingleDetail(singleID)
 	if err != nil {
+		err = errors.WithMessage(err, "single detail")
 		return err
 	}
 	songIDs := []int{detail[0].ID}
 	info, err := DownloadInfo(songIDs)
 	if err != nil {
+		err = errors.WithMessage(err, "download info")
 		return err
 	}
 	if info.IsEmpty() {
@@ -30,6 +33,7 @@ func DownloadSingle(singleID int, destDir string) (err error) {
 
 	err = AsyncDownload(info, detail, destDir)
 	if err != nil {
+		err = errors.WithMessage(err, "async download")
 		return err
 	}
 
@@ -40,11 +44,13 @@ func SingleDetail(singleID int) (result types.Slice[*entity.Single], err error) 
 	logger.ConsoleLogger.Infoln("正在解析单曲，ID:", singleID)
 	detail, err := api.GetSongDetail(*GetRequestData(), []int{singleID})
 	if err != nil {
+		err = errors.WithMessage(err, "api get song detail")
 		return nil, err
 	}
 	d := &entity.SingleResult{}
 	err = fjson.UnmarshalFromString(detail.RawJson, d)
 	if err != nil {
+		err = errors.WithMessage(err, "json unmarshal")
 		return nil, err
 	}
 	if d.Songs.IsEmpty() {

@@ -13,6 +13,7 @@ import (
 	"github.com/duke-git/lancet/v2/fileutil"
 	"github.com/duke-git/lancet/v2/netutil"
 	"github.com/panjf2000/ants/v2"
+	"github.com/pkg/errors"
 
 	"github.com/caiknife/ncmdl/entity"
 )
@@ -24,11 +25,13 @@ func DownloadInfo(songIDs []int) (r types.Slice[*entity.Download], err error) {
 		Ids:        songIDs,
 	})
 	if err != nil {
+		err = errors.WithMessage(err, "api get song url")
 		return nil, err
 	}
 	d := &entity.DownloadResult{}
 	err = fjson.UnmarshalFromString(url.RawJson, d)
 	if err != nil {
+		err = errors.WithMessage(err, "json unmarshal")
 		return nil, err
 	}
 	return d.Data, nil
@@ -37,6 +40,7 @@ func DownloadInfo(songIDs []int) (r types.Slice[*entity.Download], err error) {
 func AsyncDownload(downloads types.Slice[*entity.Download], songs types.Slice[*entity.Single], destDir string) error {
 	pool, err := ants.NewPool(defaultPoolSize)
 	if err != nil {
+		err = errors.WithMessage(err, "ant pool init")
 		return err
 	}
 	defer pool.Release()
@@ -47,11 +51,13 @@ func AsyncDownload(downloads types.Slice[*entity.Download], songs types.Slice[*e
 			defer wg.Done()
 			err := DownloadFile(downloads[i].URL, single, destDir)
 			if err != nil {
+				err = errors.WithMessage(err, "download file")
 				logger.ConsoleLogger.Errorln(err)
 				return
 			}
 		})
 		if err != nil {
+			err = errors.WithMessage(err, "ant pool submit task")
 			logger.ConsoleLogger.Errorln(err)
 		}
 	})
@@ -63,6 +69,7 @@ func WriteTag(filePath string, single *entity.Single) error {
 	logger.ConsoleLogger.Infoln("正在写入标签", single.FileName())
 	open, err := id3v2.Open(filePath, id3v2.Options{Parse: true})
 	if err != nil {
+		err = errors.WithMessage(err, "id3 open file")
 		return err
 	}
 	defer open.Close()
@@ -73,10 +80,12 @@ func WriteTag(filePath string, single *entity.Single) error {
 
 	response, err := netutil.HttpGet(single.Album.PicURL)
 	if err != nil {
+		err = errors.WithMessage(err, "http get album pic url")
 		return err
 	}
 	all, err := io.ReadAll(response.Body)
 	if err != nil {
+		err = errors.WithMessage(err, "read album pic response")
 		return err
 	}
 
@@ -90,6 +99,7 @@ func WriteTag(filePath string, single *entity.Single) error {
 	open.AddAttachedPicture(cover)
 	err = open.Save()
 	if err != nil {
+		err = errors.WithMessage(err, "save id3")
 		return err
 	}
 	return nil
@@ -100,6 +110,7 @@ func DownloadFile(url string, single *entity.Single, destDir string) error {
 	if !fileutil.IsExist(path) {
 		err := fileutil.CreateDir(path)
 		if err != nil {
+			err = errors.WithMessage(err, "create dir")
 			return err
 		}
 	}
@@ -111,10 +122,12 @@ func DownloadFile(url string, single *entity.Single, destDir string) error {
 	logger.ConsoleLogger.Infoln("开始下载文件", single.FileName())
 	err := netutil.DownloadFile(mp3file, url)
 	if err != nil {
+		err = errors.WithMessage(err, "net download music file")
 		return err
 	}
 	err = WriteTag(mp3file, single)
 	if err != nil {
+		err = errors.WithMessage(err, "write tag")
 		return err
 	}
 	return nil

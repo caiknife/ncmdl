@@ -7,6 +7,7 @@ import (
 	"github.com/caiknife/mp3lister/lib/fjson"
 	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
+	"github.com/pkg/errors"
 )
 
 type LinkType int
@@ -48,6 +49,7 @@ func NewLink(url string, cookieFile *CookieFile, dryRun bool) (l *Link, err erro
 	}
 	err = l.id()
 	if err != nil {
+		err = errors.WithMessage(err, "link load ID")
 		return nil, err
 	}
 	return l, nil
@@ -65,6 +67,7 @@ func (l *Link) id() (err error) {
 		return ErrLinkIDNotMatch
 	}
 	if err != nil {
+		err = errors.WithMessage(err, "parse link id")
 		return err
 	}
 	return nil

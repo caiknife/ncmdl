@@ -6,6 +6,7 @@ import (
 
 	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
+	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 )
 
@@ -60,6 +61,7 @@ func action() cli.ActionFunc {
 		if cookie == "" {
 			dir, err := os.UserHomeDir()
 			if err != nil {
+				err = errors.WithMessage(err, "user home dir")
 				return err
 			}
 			cookie = filepath.Join(dir, "ncm.txt")
@@ -69,12 +71,14 @@ func action() cli.ActionFunc {
 		inputLinks.ForEach(func(s string, i int) {
 			link, err := NewLink(s, cookieFile, dryRun)
 			if err != nil {
+				err = errors.WithMessage(err, "new link")
 				logger.ConsoleLogger.Errorln(err)
 				return
 			}
 			SetRequestDataCookie(link.CookieFile.ToHttpCookie())
 			err = link.Download()
 			if err != nil {
+				err = errors.WithMessage(err, "link download")
 				logger.ConsoleLogger.Errorln(err)
 			}
 		})

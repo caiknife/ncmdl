@@ -14,9 +14,9 @@ var (
 )
 
 const (
-	ErrCannotFindSingleLinkID types.Error = "没有匹配到单曲ID"
-	ErrCannotFindAlbumID      types.Error = "没有匹配到专辑ID"
-	ErrCannotFindPlaylist     types.Error = "没有匹配到歌单ID"
+	ErrCannotFindSingleID   types.Error = "没有匹配到单曲ID"
+	ErrCannotFindAlbumID    types.Error = "没有匹配到专辑ID"
+	ErrCannotFindPlaylistID types.Error = "没有匹配到歌单ID"
 )
 
 func IsSingleLink(s string) bool {
@@ -26,7 +26,7 @@ func IsSingleLink(s string) bool {
 func SingleLinkID(s string) (int, error) {
 	submatch := types.Slice[string](singleRegexp.FindStringSubmatch(s))
 	if submatch.IsEmpty() {
-		return 0, ErrCannotFindSingleLinkID
+		return 0, ErrCannotFindSingleID
 	}
 	return cast.ToInt(submatch[2]), nil
 }
@@ -50,7 +50,7 @@ func IsPlaylistLink(s string) bool {
 func PlaylistLinkID(s string) (int, error) {
 	submatch := types.Slice[string](playlistRegexp.FindStringSubmatch(s))
 	if submatch.IsEmpty() {
-		return 0, ErrCannotFindPlaylist
+		return 0, ErrCannotFindPlaylistID
 	}
 	return cast.ToInt(submatch[2]), nil
 }
