@@ -8,6 +8,7 @@ import (
 	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
 	"github.com/pkg/errors"
+	"github.com/samber/lo"
 )
 
 type LinkType int
@@ -24,6 +25,7 @@ type Link struct {
 	ID         int         `json:"id"`
 	CookieFile *CookieFile `json:"cookie_file"`
 	DryRun     bool        `json:"dry_run"`
+	Tmp        bool        `json:"tmp"`
 }
 
 func (l *Link) String() string {
@@ -36,17 +38,24 @@ const (
 	ErrLinkIDNotMatch   types.Error = "链接无法匹配ID"
 )
 
-func NewLink(url string, cookieFile *CookieFile, dryRun bool) (l *Link, err error) {
+func NewLink(url string, opts ...LinkOption) (l *Link, err error) {
+	l = &Link{Url: url}
+
 	switch {
 	case IsSingleLink(url):
-		l = &Link{Type: Single, Url: url, CookieFile: cookieFile, DryRun: dryRun}
+		l.Type = Single
 	case IsAlbumLink(url):
-		l = &Link{Type: Album, Url: url, CookieFile: cookieFile, DryRun: dryRun}
+		l.Type = Album
 	case IsPlaylistLink(url):
-		l = &Link{Type: Playlist, Url: url, CookieFile: cookieFile, DryRun: dryRun}
+		l.Type = Playlist
 	default:
 		return nil, ErrLinkTypeNotMatch
 	}
+
+	for _, opt := range opts {
+		opt(l)
+	}
+
 	err = l.id()
 	if err != nil {
 		err = errors.WithMessage(err, "link load ID")
@@ -79,13 +88,14 @@ func (l *Link) Download() (err error) {
 		logger.ConsoleLogger.Infoln("退出程序，不进行下载")
 		return
 	}
+	destDir := Path(lo.Ternary(l.Tmp, "./tmp/", "./"))
 	switch l.Type {
 	case Single:
-		return DownloadSingle(l.ID, Path("./"))
+		return DownloadSingle(l.ID, destDir)
 	case Album:
-		return DownloadAlbum(l.ID, Path("./"))
+		return DownloadAlbum(l.ID, destDir)
 	case Playlist:
-		return DownloadPlaylist(l.ID, Path("./"))
+		return DownloadPlaylist(l.ID, destDir)
 	}
 	return nil
 }
@@ -100,4 +110,24 @@ func SetRequestDataCookie(cookie types.Slice[*http.Cookie]) {
 
 func GetRequestData() *utils.RequestData {
 	return reqData
+}
+
+type LinkOption func(*Link)
+
+func OptionDryRun(dryRun bool) LinkOption {
+	return func(l *Link) {
+		l.DryRun = dryRun
+	}
+}
+
+func OptionTmp(tmp bool) LinkOption {
+	return func(l *Link) {
+		l.Tmp = tmp
+	}
+}
+
+func OptionCookieFile(cookieFile *CookieFile) LinkOption {
+	return func(l *Link) {
+		l.CookieFile = cookieFile
+	}
 }

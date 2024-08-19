@@ -40,6 +40,12 @@ func newApp() *cli.App {
 				Usage:   "演习模式",
 				Value:   false,
 			},
+			&cli.BoolFlag{
+				Name:    "tmp",
+				Aliases: []string{"t"},
+				Usage:   "下载到tmp目录",
+				Value:   false,
+			},
 		},
 		Action: action(),
 	}
@@ -68,8 +74,11 @@ func action() cli.ActionFunc {
 		}
 		cookieFile := NewCookieFile(cookie)
 		dryRun := c.Bool("dryrun")
+		tmp := c.Bool("tmp")
 		inputLinks.ForEach(func(s string, i int) {
-			link, err := NewLink(s, cookieFile, dryRun)
+			link, err := NewLink(s,
+				OptionCookieFile(cookieFile), OptionDryRun(dryRun), OptionTmp(tmp),
+			)
 			if err != nil {
 				err = errors.WithMessage(err, "new link")
 				logger.ConsoleLogger.Errorln(err)
