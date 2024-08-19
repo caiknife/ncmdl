@@ -29,7 +29,7 @@ func (s *Single) CoverURL() string {
 }
 
 func (s *Single) FileName() string {
-	return fmt.Sprintf("%s - %s.mp3", s.Artist[0].Name, s.Album.Name)
+	return fmt.Sprintf("%s - %s.mp3", s.Artist[0].Name, s.Name)
 }
 
 func (s *Single) SaveFileName() string {
