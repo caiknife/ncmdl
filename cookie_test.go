@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,5 +16,7 @@ func init() {
 func TestNewCookie(t *testing.T) {
 	cookie := NewCookieFile(ncmCookieFile)
 	assert.False(t, cookie.IsEmpty())
-	t.Log(cookie.ToHttpCookie())
+	cookie.Values.ForEach(func(cookie *http.Cookie, i int) {
+		t.Log(i, cookie)
+	})
 }
