@@ -86,9 +86,9 @@ func (l *Link) Download() (err error) {
 	if l.DryRun {
 		logger.ConsoleLogger.Infoln("当前是演习模式，要解析的URL是", l.Url)
 		logger.ConsoleLogger.Infoln("退出程序，不进行下载")
-		return
+		return nil
 	}
-	destDir := Path(lo.Ternary(l.Tmp, "./tmp/", "./"))
+	destDir := Path(lo.Ternary[string](l.Tmp, "./tmp/", "./"))
 	switch l.Type {
 	case Single:
 		return DownloadSingle(l.ID, destDir)
