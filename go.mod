@@ -5,7 +5,7 @@ go 1.22
 require (
 	github.com/XiaoMengXinX/Music163Api-Go v0.1.30
 	github.com/bogem/id3v2/v2 v2.1.4
-	github.com/caiknife/mp3lister v1.1.9
+	github.com/caiknife/mp3lister v1.1.10
 	github.com/duke-git/lancet/v2 v2.3.2
 	github.com/panjf2000/ants/v2 v2.10.0
 	github.com/pkg/errors v0.9.1
