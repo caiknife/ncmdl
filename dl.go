@@ -83,6 +83,8 @@ func WriteTag(filePath string, single *entity.Single) error {
 		err = errors.WithMessage(err, "http get album pic url")
 		return err
 	}
+	defer response.Body.Close()
+
 	all, err := io.ReadAll(response.Body)
 	if err != nil {
 		err = errors.WithMessage(err, "read album pic response")
