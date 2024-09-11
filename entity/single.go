@@ -3,10 +3,13 @@ package entity
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/caiknife/mp3lister/lib/fjson"
 	"github.com/caiknife/mp3lister/lib/types"
 )
+
+const nullSeparator = "\u0000"
 
 type Single struct {
 	ID     int                  `json:"id"`
@@ -35,4 +38,12 @@ func (s *Single) FileName() string {
 
 func (s *Single) SaveFileName() string {
 	return filepath.Join(s.SavePath(), s.FileName())
+}
+
+func (s *Single) AllArtistTag() string {
+	allArtist := types.Slice[string]{}
+	s.Artist.ForEach(func(artist *Artist, i int) {
+		allArtist = append(allArtist, artist.Name)
+	})
+	return strings.Join(allArtist, nullSeparator)
 }

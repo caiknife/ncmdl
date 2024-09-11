@@ -77,7 +77,7 @@ func WriteTag(filePath string, single *entity.Single) error {
 
 	open.SetAlbum(single.Album.Name)
 	open.SetTitle(single.Name)
-	open.SetArtist(single.Artist[0].Name)
+	open.SetArtist(single.AllArtistTag())
 
 	response, err := netutil.HttpGet(single.Album.PicURL)
 	if err != nil {
