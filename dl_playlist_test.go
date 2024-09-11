@@ -28,5 +28,9 @@ func TestDownloadPlaylist(t *testing.T) {
 			return
 		}
 		err = DownloadPlaylist(id, Path("./tmp/"))
+		if err != nil {
+			t.Error(err)
+			return
+		}
 	})
 }

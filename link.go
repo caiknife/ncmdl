@@ -21,7 +21,7 @@ const (
 
 type Link struct {
 	Type       LinkType    `json:"type"`
-	Url        string      `json:"url"`
+	URL        string      `json:"url"`
 	ID         int         `json:"id"`
 	CookieFile *CookieFile `json:"cookie_file"`
 	DryRun     bool        `json:"dry_run"`
@@ -39,7 +39,7 @@ const (
 )
 
 func NewLink(url string, opts ...LinkOption) (l *Link, err error) {
-	l = &Link{Url: url}
+	l = &Link{URL: url}
 
 	switch {
 	case IsSingleLink(url):
@@ -67,11 +67,11 @@ func NewLink(url string, opts ...LinkOption) (l *Link, err error) {
 func (l *Link) id() (err error) {
 	switch l.Type {
 	case Single:
-		l.ID, err = SingleLinkID(l.Url)
+		l.ID, err = SingleLinkID(l.URL)
 	case Album:
-		l.ID, err = AlbumLinkID(l.Url)
+		l.ID, err = AlbumLinkID(l.URL)
 	case Playlist:
-		l.ID, err = PlaylistLinkID(l.Url)
+		l.ID, err = PlaylistLinkID(l.URL)
 	default:
 		return ErrLinkIDNotMatch
 	}
@@ -84,7 +84,7 @@ func (l *Link) id() (err error) {
 
 func (l *Link) Download() (err error) {
 	if l.DryRun {
-		logger.ConsoleLogger.Infoln("当前是演习模式，要解析的URL是", l.Url)
+		logger.ConsoleLogger.Infoln("当前是演习模式，要解析的URL是", l.URL)
 		logger.ConsoleLogger.Infoln("退出程序，不进行下载")
 		return nil
 	}
