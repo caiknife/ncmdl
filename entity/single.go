@@ -13,6 +13,7 @@ type Single struct {
 	Name   string               `json:"name"`
 	Artist types.Slice[*Artist] `json:"ar"`
 	Album  *Album               `json:"al"`
+	URL    string               `json:"url"`
 }
 
 func (s *Single) String() string {

@@ -27,11 +27,13 @@ func DownloadSingle(singleID int, destDir string) (err error) {
 		err = errors.WithMessage(err, "download info")
 		return err
 	}
-	if info.IsEmpty() {
+	if info.Len() != detail.Len() {
 		return ErrSongDownload
 	}
 
-	err = AsyncDownload(info, detail, destDir)
+	MergeURL(info, &detail)
+
+	err = AsyncDownload(detail, destDir)
 	if err != nil {
 		err = errors.WithMessage(err, "async download")
 		return err

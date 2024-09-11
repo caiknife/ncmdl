@@ -34,7 +34,9 @@ func DownloadAlbum(albumID int, destDir string) (err error) {
 		return ErrAlbumDownload
 	}
 
-	err = AsyncDownload(info, detail, destDir)
+	MergeURL(info, &detail)
+
+	err = AsyncDownload(detail, destDir)
 	if err != nil {
 		err = errors.WithMessage(err, "async download")
 		return err

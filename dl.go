@@ -14,6 +14,7 @@ import (
 	"github.com/duke-git/lancet/v2/netutil"
 	"github.com/panjf2000/ants/v2"
 	"github.com/pkg/errors"
+	"github.com/samber/lo"
 
 	"github.com/caiknife/ncmdl/entity"
 )
@@ -37,7 +38,7 @@ func DownloadInfo(songIDs []int) (r types.Slice[*entity.Download], err error) {
 	return d.Data, nil
 }
 
-func AsyncDownload(downloads types.Slice[*entity.Download], songs types.Slice[*entity.Single], destDir string) error {
+func AsyncDownload(songs types.Slice[*entity.Single], destDir string) error {
 	pool, err := ants.NewPool(defaultPoolSize)
 	if err != nil {
 		err = errors.WithMessage(err, "ant pool init")
@@ -49,7 +50,7 @@ func AsyncDownload(downloads types.Slice[*entity.Download], songs types.Slice[*e
 		wg.Add(1)
 		err := pool.Submit(func() {
 			defer wg.Done()
-			err := DownloadFile(downloads[i].URL, single, destDir)
+			err := DownloadFile(single.URL, single, destDir)
 			if err != nil {
 				err = errors.WithMessage(err, "download file")
 				logger.ConsoleLogger.Errorln(err)
@@ -108,6 +109,9 @@ func WriteTag(filePath string, single *entity.Single) error {
 }
 
 func DownloadFile(url string, single *entity.Single, destDir string) error {
+	if url == "" {
+		return errors.New("url is empty")
+	}
 	path := filepath.Join(destDir, single.SavePath())
 	if !fileutil.IsExist(path) {
 		err := fileutil.CreateDir(path)
@@ -141,4 +145,16 @@ func Path(destDir string) string {
 		return "."
 	}
 	return abs
+}
+
+func MergeURL(downloadInfo types.Slice[*entity.Download], detail *types.Slice[*entity.Single]) {
+	infoMap := lo.SliceToMap[*entity.Download, int, *entity.Download](downloadInfo, func(item *entity.Download) (int, *entity.Download) {
+		return item.ID, item
+	})
+
+	detail.ForEach(func(single *entity.Single, i int) {
+		if info, ok := infoMap[single.ID]; ok {
+			single.URL = info.URL
+		}
+	})
 }
