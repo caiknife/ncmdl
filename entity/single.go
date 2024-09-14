@@ -33,7 +33,8 @@ func (s *Single) CoverURL() string {
 }
 
 func (s *Single) FileName() string {
-	return fmt.Sprintf("%s - %s.mp3", s.Artist[0].Name, s.Name)
+	replaceName := strings.ReplaceAll(s.Name, "/", ",")
+	return fmt.Sprintf("%s - %s.mp3", s.Artist[0].Name, replaceName)
 }
 
 func (s *Single) SaveFileName() string {
