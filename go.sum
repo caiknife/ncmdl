@@ -2,8 +2,8 @@ github.com/XiaoMengXinX/Music163Api-Go v0.1.30 h1:MqRItDFtX1J0JTlFtwN2RwjsYMA7/g
 github.com/XiaoMengXinX/Music163Api-Go v0.1.30/go.mod h1:kLU/CkLxKnEJFCge0URvQ0lHt6ImoG1/2aVeNbgV2RQ=
 github.com/bogem/id3v2/v2 v2.1.4 h1:CEwe+lS2p6dd9UZRlPc1zbFNIha2mb2qzT1cCEoNWoI=
 github.com/bogem/id3v2/v2 v2.1.4/go.mod h1:l+gR8MZ6rc9ryPTPkX77smS5Me/36gxkMgDayZ9G1vY=
-github.com/caiknife/mp3lister v1.1.10 h1:Tu8h2kAKYPO8T4NsxnTqKuMkDKMUqpxW++G+zmbw3Q0=
-github.com/caiknife/mp3lister v1.1.10/go.mod h1:BekJa2NNxaPrjNxeAzIVhvSv9fXWptRhQ7vGPE4XcOQ=
+github.com/caiknife/mp3lister v1.2.0 h1:t6RMU8kVokcFIlI8i6COXtZjyR45qwR0TTwcN+Bf3Q0=
+github.com/caiknife/mp3lister v1.2.0/go.mod h1:BekJa2NNxaPrjNxeAzIVhvSv9fXWptRhQ7vGPE4XcOQ=
 github.com/cpuguy83/go-md2man/v2 v2.0.4 h1:wfIWP927BUkWJb2NmU/kNDYIBTh/ziUX91+lVfRxZq4=
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
