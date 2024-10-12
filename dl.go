@@ -75,6 +75,7 @@ func WriteTag(filePath string, single *entity.Single) error {
 	}
 	defer open.Close()
 
+	open.SetDefaultEncoding(id3v2.EncodingUTF8)
 	open.SetAlbum(single.Album.Name)
 	open.SetTitle(single.Name)
 	open.SetArtist(single.AllArtistTag())
