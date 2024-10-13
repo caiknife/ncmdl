@@ -5,7 +5,7 @@ import (
 
 	"github.com/samber/lo"
 
-	"github.com/caiknife/ncmdl/entity"
+	"github.com/caiknife/ncmdl/v2/entity"
 )
 
 func TestDownloadAlbum(t *testing.T) {

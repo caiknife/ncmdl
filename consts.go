@@ -1,6 +1,6 @@
 package main
 
 const (
-	defaultPoolSize = 5
-	nullSeparator   = "\u0000"
+	PoolSize      = 5
+	NullSeparator = "\u0000"
 )

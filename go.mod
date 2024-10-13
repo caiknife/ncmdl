@@ -1,4 +1,4 @@
-module github.com/caiknife/ncmdl
+module github.com/caiknife/ncmdl/v2
 
 go 1.22
 

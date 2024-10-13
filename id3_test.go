@@ -29,7 +29,7 @@ func TestID3_SetArtist(t *testing.T) {
 	}
 	defer open.Close()
 
-	open.SetArtist(strings.Join([]string{"111", "222", "333"}, nullSeparator))
+	open.SetArtist(strings.Join([]string{"111", "222", "333"}, NullSeparator))
 	err = open.Save()
 	if err != nil {
 		t.Error(err)

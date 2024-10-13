@@ -7,7 +7,7 @@ import (
 	"github.com/caiknife/mp3lister/lib/types"
 	"github.com/pkg/errors"
 
-	"github.com/caiknife/ncmdl/entity"
+	"github.com/caiknife/ncmdl/v2/entity"
 )
 
 const (

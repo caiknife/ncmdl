@@ -16,7 +16,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 
-	"github.com/caiknife/ncmdl/entity"
+	"github.com/caiknife/ncmdl/v2/entity"
 )
 
 func DownloadInfo(songIDs []int) (r types.Slice[*entity.Download], err error) {
@@ -39,7 +39,7 @@ func DownloadInfo(songIDs []int) (r types.Slice[*entity.Download], err error) {
 }
 
 func AsyncDownload(songs types.Slice[*entity.Single], destDir string) error {
-	pool, err := ants.NewPool(defaultPoolSize)
+	pool, err := ants.NewPool(PoolSize)
 	if err != nil {
 		err = errors.WithMessage(err, "ant pool init")
 		return err

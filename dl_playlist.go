@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 
-	"github.com/caiknife/ncmdl/entity"
+	"github.com/caiknife/ncmdl/v2/entity"
 )
 
 func DownloadPlaylist(playlistID int, destDir string) (err error) {
