@@ -120,7 +120,7 @@ func DownloadFile(url string, single *SingleInfo, destDir string) error {
 	}
 
 	mp3File := filepath.Join(destDir, single.SaveFileName())
-	if !fileutil.IsExist(mp3File) {
+	if fileutil.IsExist(mp3File) {
 		appLogger.Warnln(single.FileName(), "文件已经存在")
 		return nil
 	}
