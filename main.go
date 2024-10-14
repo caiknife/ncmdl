@@ -7,18 +7,29 @@ import (
 	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
+
+var defaultPoolSize = PoolSize
+
+var appLogger *logrus.Logger
+
+func init() {
+	appLogger = logger.NewConsoleLogger(
+		logger.DisableTimestamp(true),
+	)
+}
 
 func main() {
 	defer func() {
 		if r := recover(); r != nil {
-			logger.ConsoleLogger.Fatalln("程序发生了异常", r)
+			appLogger.Fatalln("程序发生了异常", r)
 		}
 	}()
 
 	if err := newApp().Run(os.Args); err != nil {
-		logger.ConsoleLogger.Fatalln(err)
+		appLogger.Fatalln(err)
 		return
 	}
 }
@@ -31,20 +42,26 @@ func newApp() *cli.App {
 			&cli.StringFlag{
 				Name:    "cookie",
 				Aliases: []string{"c"},
-				Usage:   "Cookie文件名",
+				Usage:   "被加载的cookie文件名",
 				Value:   "",
 			},
 			&cli.BoolFlag{
-				Name:    "dryrun",
-				Aliases: []string{"d"},
-				Usage:   "演习模式",
+				Name:    "info",
+				Aliases: []string{"i"},
+				Usage:   "打印下载信息，所有歌曲的相关信息",
 				Value:   false,
 			},
 			&cli.BoolFlag{
 				Name:    "tmp",
 				Aliases: []string{"t"},
-				Usage:   "下载到tmp目录",
+				Usage:   "下载到当前目录下的tmp目录，而不是下载到当前目录",
 				Value:   false,
+			},
+			&cli.IntFlag{
+				Name:    "pool",
+				Aliases: []string{"p"},
+				Usage:   "使用多任务下载，默认的任务池大小",
+				Value:   PoolSize,
 			},
 		},
 		Action: action(),
@@ -63,6 +80,7 @@ func action() cli.ActionFunc {
 		if inputLinks.IsEmpty() {
 			return ErrInputLinksAreEmpty
 		}
+
 		cookie := c.String("cookie")
 		if cookie == "" {
 			dir, err := os.UserHomeDir()
@@ -72,25 +90,31 @@ func action() cli.ActionFunc {
 			}
 			cookie = filepath.Join(dir, "ncm.txt")
 		}
+
 		cookieFile := NewCookieFile(cookie)
-		dryRun := c.Bool("dryrun")
+		info := c.Bool("info")
 		tmp := c.Bool("tmp")
+
 		inputLinks.ForEach(func(s string, i int) {
-			link, err := NewLink(s,
-				OptionCookieFile(cookieFile), OptionDryRun(dryRun), OptionTmp(tmp),
+			link, err := NewLink(
+				s,
+				LinkOptionCookieFile(cookieFile),
+				LinkOptionOnlyInfo(info),
+				LinkOptionTmp(tmp),
 			)
 			if err != nil {
 				err = errors.WithMessage(err, "new link")
-				logger.ConsoleLogger.Errorln(err)
+				appLogger.Errorln(err)
 				return
 			}
-			SetRequestDataCookie(link.CookieFile.ToHttpCookie())
+
 			err = link.Download()
 			if err != nil {
 				err = errors.WithMessage(err, "link download")
-				logger.ConsoleLogger.Errorln(err)
+				appLogger.Errorln(err)
 			}
 		})
+
 		return nil
 	}
 }

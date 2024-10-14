@@ -1,11 +1,10 @@
 package main
 
 import (
-	"net/http"
+	"path/filepath"
 
 	"github.com/XiaoMengXinX/Music163Api-Go/utils"
 	"github.com/caiknife/mp3lister/lib/fjson"
-	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
@@ -24,8 +23,11 @@ type Link struct {
 	URL        string      `json:"url"`
 	ID         int         `json:"id"`
 	CookieFile *CookieFile `json:"cookie_file"`
-	DryRun     bool        `json:"dry_run"`
+	Info       bool        `json:"info"`
 	Tmp        bool        `json:"tmp"`
+
+	reqData *utils.RequestData
+	destDir string
 }
 
 func (l *Link) String() string {
@@ -56,15 +58,47 @@ func NewLink(url string, opts ...LinkOption) (l *Link, err error) {
 		opt(l)
 	}
 
-	err = l.id()
+	err = l.loadID()
 	if err != nil {
 		err = errors.WithMessage(err, "link load ID")
 		return nil, err
 	}
+
+	l.reqData = &utils.RequestData{}
+	l.reqData.Cookies = l.CookieFile.ToHttpCookie()
+
+	l.destDir = Path(lo.Ternary[string](l.Tmp, filepath.Join(".", "tmp"), "."))
+
 	return l, nil
 }
 
-func (l *Link) id() (err error) {
+func (l *Link) Download() error {
+	switch l.Type {
+	case Single:
+		return l.downloadSingle()
+	case Album:
+		return l.downloadAlbum()
+	case Playlist:
+		return l.downloadPlaylist()
+	default:
+		return ErrLinkTypeNotMatch
+	}
+	return nil
+}
+
+func (l *Link) downloadSingle() error {
+	return nil
+}
+
+func (l *Link) downloadAlbum() error {
+	return nil
+}
+
+func (l *Link) downloadPlaylist() error {
+	return nil
+}
+
+func (l *Link) loadID() (err error) {
 	switch l.Type {
 	case Single:
 		l.ID, err = SingleLinkID(l.URL)
@@ -82,52 +116,22 @@ func (l *Link) id() (err error) {
 	return nil
 }
 
-func (l *Link) Download() (err error) {
-	if l.DryRun {
-		logger.ConsoleLogger.Infoln("当前是演习模式，要解析的URL是", l.URL)
-		logger.ConsoleLogger.Infoln("退出程序，不进行下载")
-		return nil
-	}
-	destDir := Path(lo.Ternary[string](l.Tmp, "./tmp/", "./"))
-	switch l.Type {
-	case Single:
-		return DownloadSingle(l.ID, destDir)
-	case Album:
-		return DownloadAlbum(l.ID, destDir)
-	case Playlist:
-		return DownloadPlaylist(l.ID, destDir)
-	}
-	return nil
-}
+type LinkOption func(link *Link)
 
-var (
-	reqData = &utils.RequestData{}
-)
-
-func SetRequestDataCookie(cookie types.Slice[*http.Cookie]) {
-	reqData.Cookies = cookie
-}
-
-func GetRequestData() *utils.RequestData {
-	return reqData
-}
-
-type LinkOption func(*Link)
-
-func OptionDryRun(dryRun bool) LinkOption {
-	return func(l *Link) {
-		l.DryRun = dryRun
+func LinkOptionOnlyInfo(flag bool) LinkOption {
+	return func(link *Link) {
+		link.Info = flag
 	}
 }
 
-func OptionTmp(tmp bool) LinkOption {
-	return func(l *Link) {
-		l.Tmp = tmp
+func LinkOptionTmp(flag bool) LinkOption {
+	return func(link *Link) {
+		link.Tmp = flag
 	}
 }
 
-func OptionCookieFile(cookieFile *CookieFile) LinkOption {
-	return func(l *Link) {
-		l.CookieFile = cookieFile
+func LinkOptionCookieFile(file *CookieFile) LinkOption {
+	return func(link *Link) {
+		link.CookieFile = file
 	}
 }

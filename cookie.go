@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/caiknife/mp3lister/lib/fjson"
-	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
 	"github.com/duke-git/lancet/v2/fileutil"
 	"github.com/spf13/cast"
@@ -67,6 +66,5 @@ func NewCookieFile(cookieFile string) *CookieFile {
 			SameSite: http.SameSiteLaxMode,
 		})
 	}
-	logger.ConsoleLogger.Infoln("已经加载cookies文件", cookieFile)
 	return c
 }

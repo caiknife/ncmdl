@@ -13,7 +13,7 @@
 本地有Go环境，执行
 
 ```shell
-go install github.com/caiknife/ncmdl@latest
+go install github.com/caiknife/ncmdl/v2@latest
 ```
 本地没有Go环境，请在[release页面](https://github.com/caiknife/ncmdl/releases)下载最新的二进制文件，请注意区分操作系统和CPU架构。并将二进制文件放在曲库文件夹下。
 
