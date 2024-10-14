@@ -2369,3 +2369,19 @@ func Test_PlaylistResult(t *testing.T) {
 	}
 	t.Log(d)
 }
+
+func Test_PlaylistDetail(t *testing.T) {
+	playlistURLs.ForEach(func(s string, i int) {
+		id, err := PlaylistLinkID(s)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		detail, err := PlaylistDetail(id, reqData)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		t.Log(detail)
+	})
+}

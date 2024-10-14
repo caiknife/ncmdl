@@ -9,11 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var ncmCookieFile = "./ncm.txt"
-
-func init() {
-
-}
+const ncmCookieFile = "./ncm.txt"
 
 func TestNewCookie(t *testing.T) {
 	cookie := NewCookieFile(ncmCookieFile)

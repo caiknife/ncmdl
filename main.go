@@ -70,10 +70,6 @@ func newApp() *cli.App {
 	return app
 }
 
-const (
-	ErrInputLinksAreEmpty types.Error = "请输入歌单、专辑、单曲链接"
-)
-
 func action() cli.ActionFunc {
 	return func(c *cli.Context) error {
 		inputLinks := types.Slice[string](c.Args().Slice())
@@ -81,6 +77,13 @@ func action() cli.ActionFunc {
 			return ErrInputLinksAreEmpty
 		}
 
+		// 异步任务数量
+		poolSize := c.Int("pool")
+		if poolSize > 0 {
+			defaultPoolSize = poolSize
+		}
+
+		// 加载cookie文件
 		cookie := c.String("cookie")
 		if cookie == "" {
 			dir, err := os.UserHomeDir()
@@ -92,7 +95,9 @@ func action() cli.ActionFunc {
 		}
 
 		cookieFile := NewCookieFile(cookie)
+		// 仅显示下载信息，不进行下载
 		info := c.Bool("info")
+		// 是否下载到tmp目录
 		tmp := c.Bool("tmp")
 
 		inputLinks.ForEach(func(s string, i int) {

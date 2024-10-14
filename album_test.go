@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/caiknife/mp3lister/lib/fjson"
+	"github.com/samber/lo"
 )
 
 const (
@@ -1170,4 +1171,48 @@ func Test_AlbumResult(t *testing.T) {
 		return
 	}
 	t.Log(d.Album)
+}
+
+func Test_AlbumDetail_Random_Order(t *testing.T) {
+	// const album = "https://music.163.com/album?id=153840942&userid=757014"
+	const album = "https://music.163.com/album?id=195093556&userid=757014"
+	id, err := AlbumLinkID(album)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	detail, err := AlbumDetail(id, reqData)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(detail)
+
+	songIDs := lo.Map[*SingleInfo, int](detail, func(item *SingleInfo, index int) int {
+		return item.ID
+	})
+	t.Log(songIDs)
+	info, err := DownloadLink(songIDs, reqData)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(info)
+}
+
+func Test_AlbumDetail(t *testing.T) {
+	albumURLs.ForEach(func(s string, i int) {
+		id, err := AlbumLinkID(s)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		detail, err := AlbumDetail(id, reqData)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		t.Log(detail)
+	})
 }

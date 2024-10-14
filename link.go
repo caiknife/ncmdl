@@ -87,15 +87,98 @@ func (l *Link) Download() error {
 }
 
 func (l *Link) downloadSingle() error {
+	appLogger.Infoln("正在解析单曲:", l.ID)
+	detail, err := SingleDetail(l.ID, l.reqData)
+	if err != nil {
+		err = errors.WithMessage(err, "single detail")
+		return err
+	}
+
+	songIDs := []int{detail[0].ID}
+	link, err := DownloadLink(songIDs, l.reqData)
+	if err != nil {
+		err = errors.WithMessage(err, "download link")
+		return err
+	}
+	if link.Len() != detail.Len() {
+		return ErrSongDownload
+	}
+
+	MergeURL(link, &detail)
+
+	return l.downloadDetail(detail)
+}
+
+func (l *Link) downloadDetail(detail types.Slice[*SingleInfo]) error {
+	// 只显示下载信息，不进行下载
+	if l.Info {
+		l.printInfo(detail)
+		return nil
+	}
+
+	err := AsyncDownload(detail, l.destDir)
+	if err != nil {
+		err = errors.WithMessage(err, "async download")
+		return err
+	}
 	return nil
+}
+
+func (l *Link) printInfo(detail types.Slice[*SingleInfo]) {
+	appLogger.Infoln("需要下载的歌曲列表:")
+	detail.ForEach(func(info *SingleInfo, i int) {
+		appLogger.Infoln(info.FileName())
+	})
 }
 
 func (l *Link) downloadAlbum() error {
-	return nil
+	appLogger.Infoln("正在解析专辑:", l.ID)
+	detail, err := AlbumDetail(l.ID, l.reqData)
+	if err != nil {
+		err = errors.WithMessage(err, "album detail")
+		return err
+	}
+	songIDs := lo.Map[*SingleInfo, int](detail, func(item *SingleInfo, index int) int {
+		return item.ID
+	})
+
+	link, err := DownloadLink(songIDs, l.reqData)
+	if err != nil {
+		err = errors.WithMessage(err, "download link")
+		return err
+	}
+
+	if link.Len() != detail.Len() {
+		return ErrAlbumDownload
+	}
+
+	MergeURL(link, &detail)
+
+	return l.downloadDetail(detail)
 }
 
 func (l *Link) downloadPlaylist() error {
-	return nil
+	appLogger.Infoln("正在解析歌单:", l.ID)
+	detail, err := PlaylistDetail(l.ID, l.reqData)
+	if err != nil {
+		err = errors.WithMessage(err, "playlist detail")
+		return err
+	}
+	songIDs := lo.Map[*SingleInfo, int](detail, func(item *SingleInfo, index int) int {
+		return item.ID
+	})
+	link, err := DownloadLink(songIDs, l.reqData)
+	if err != nil {
+		err = errors.WithMessage(err, "download link")
+		return err
+	}
+	if link.Len() != detail.Len() {
+		return ErrPlaylistDownload
+	}
+
+	MergeURL(link, &detail)
+
+	return l.downloadDetail(detail)
 }
 
 func (l *Link) loadID() (err error) {

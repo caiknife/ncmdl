@@ -31,10 +31,6 @@ func (c *CookieFile) ToHttpCookie() (cookie types.Slice[*http.Cookie]) {
 	return c.Values
 }
 
-const (
-	ErrCookieFile = "cookies文件格式异常"
-)
-
 func NewCookieFile(cookieFile string) *CookieFile {
 	c := &CookieFile{
 		Values: types.Slice[*http.Cookie]{},

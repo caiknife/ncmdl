@@ -174,3 +174,19 @@ func Test_SingleResult(t *testing.T) {
 	}
 	t.Log(d)
 }
+
+func Test_SingleDetail(t *testing.T) {
+	singleURLs.ForEach(func(s string, i int) {
+		id, err := SingleLinkID(s)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		detail, err := SingleDetail(id, reqData)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		t.Log(detail)
+	})
+}

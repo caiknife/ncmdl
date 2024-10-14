@@ -13,12 +13,6 @@ var (
 	singleRegexp   = regexp.MustCompile(`^https://music\.163\.com/(#/)?song\?id=(\d+)`)
 )
 
-const (
-	ErrCannotFindSingleID   types.Error = "没有匹配到单曲ID"
-	ErrCannotFindAlbumID    types.Error = "没有匹配到专辑ID"
-	ErrCannotFindPlaylistID types.Error = "没有匹配到歌单ID"
-)
-
 func IsSingleLink(s string) bool {
 	return singleRegexp.MatchString(s)
 }
