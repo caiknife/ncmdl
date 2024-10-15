@@ -155,7 +155,7 @@ func WriteTag(filePath string, single *SingleInfo) error {
 	open.SetArtist(single.AllArtistsTag())
 
 	// 专辑封面图片
-	response, err := netutil.HttpGet(single.Album.PicURL)
+	response, err := netutil.HttpGet(single.CoverURL())
 	if err != nil {
 		err = errors.WithMessage(err, "net http get album pic url")
 		return err

@@ -8,7 +8,7 @@ import (
 )
 
 const mp3File = "./tmp/Enric Peidro & Jonathan Stout/Groove at First Sight/Enric Peidro & Jonathan Stout - Squatty Roo.mp3"
-const mp3File_1 = "./tmp/Jonathan Stout and his Campus Five,Hilary Alexander - Diga Diga Doo.mp3"
+const mp3File_1 = "./tmp/Jonathan Stout and his Campus Five/Jammin' the Blues/Jonathan Stout and his Campus Five - Diga Diga Doo.mp3"
 
 func TestID3_GetArtist(t *testing.T) {
 	open, err := id3v2.Open(mp3File_1, id3v2.Options{Parse: true})
