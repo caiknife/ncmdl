@@ -83,7 +83,6 @@ func (l *Link) Download() error {
 	default:
 		return ErrLinkTypeNotMatch
 	}
-	return nil
 }
 
 func (l *Link) downloadSingle() error {
