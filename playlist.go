@@ -1,4 +1,4 @@
-package main
+package ncmdl
 
 import (
 	"github.com/XiaoMengXinX/Music163Api-Go/api"

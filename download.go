@@ -1,4 +1,4 @@
-package main
+package ncmdl
 
 import (
 	"io"
@@ -77,7 +77,7 @@ func DownloadLink(songIDs []int, reqData *utils.RequestData) (result types.Slice
 }
 
 func AsyncDownload(songs types.Slice[*SingleInfo], destDir string) error {
-	pool, err := ants.NewPool(defaultPoolSize)
+	pool, err := ants.NewPool(DefaultPoolSize)
 	if err != nil {
 		err = errors.WithMessage(err, "ants pool init")
 		return err
@@ -92,13 +92,13 @@ func AsyncDownload(songs types.Slice[*SingleInfo], destDir string) error {
 			err := DownloadFile(info.URL, info, destDir)
 			if err != nil {
 				err = errors.WithMessage(err, "download file")
-				appLogger.Errorln(err)
+				AppLogger.Errorln(err)
 				return
 			}
 		})
 		if err != nil {
 			err = errors.WithMessage(err, "ant pool submit task")
-			appLogger.Errorln(err)
+			AppLogger.Errorln(err)
 		}
 	})
 	wg.Wait()
@@ -121,11 +121,11 @@ func DownloadFile(url string, single *SingleInfo, destDir string) error {
 
 	mp3File := filepath.Join(destDir, single.SaveFileName())
 	if fileutil.IsExist(mp3File) {
-		appLogger.Warnln(single.FileName(), "文件已经存在")
+		AppLogger.Warnln(single.FileName(), "文件已经存在")
 		return nil
 	}
 
-	appLogger.Infoln("开始下载文件", single.FileName())
+	AppLogger.Infoln("开始下载文件", single.FileName())
 	err := netutil.DownloadFile(mp3File, url)
 	if err != nil {
 		err = errors.WithMessage(err, "net download music file")
@@ -141,7 +141,7 @@ func DownloadFile(url string, single *SingleInfo, destDir string) error {
 }
 
 func WriteTag(filePath string, single *SingleInfo) error {
-	appLogger.Infoln("正在写入标签", single.FileName())
+	AppLogger.Infoln("正在写入标签", single.FileName())
 	open, err := id3v2.Open(filePath, id3v2.Options{Parse: true})
 	if err != nil {
 		err = errors.WithMessage(err, "id3 open file")

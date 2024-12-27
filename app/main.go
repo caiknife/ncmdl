@@ -1,35 +1,25 @@
-package main
+package app
 
 import (
 	"os"
 	"path/filepath"
 
-	"github.com/caiknife/mp3lister/lib/logger"
 	"github.com/caiknife/mp3lister/lib/types"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+
+	"github.com/caiknife/ncmdl/v2"
 )
-
-var defaultPoolSize = PoolSize
-
-var appLogger *logrus.Logger
-
-func init() {
-	appLogger = logger.NewConsoleLogger(
-		logger.DisableTimestamp(true),
-	)
-}
 
 func main() {
 	defer func() {
 		if r := recover(); r != nil {
-			appLogger.Fatalln("程序发生了异常", r)
+			ncmdl.AppLogger.Fatalln("程序发生了异常", r)
 		}
 	}()
 
 	if err := newApp().Run(os.Args); err != nil {
-		appLogger.Fatalln(err)
+		ncmdl.AppLogger.Fatalln(err)
 		return
 	}
 }
@@ -61,7 +51,7 @@ func newApp() *cli.App {
 				Name:    "pool",
 				Aliases: []string{"p"},
 				Usage:   "使用多任务下载，默认的任务池大小",
-				Value:   PoolSize,
+				Value:   ncmdl.PoolSize,
 			},
 		},
 		Action: action(),
@@ -74,13 +64,13 @@ func action() cli.ActionFunc {
 	return func(c *cli.Context) error {
 		inputLinks := types.Slice[string](c.Args().Slice())
 		if inputLinks.IsEmpty() {
-			return ErrInputLinksAreEmpty
+			return ncmdl.ErrInputLinksAreEmpty
 		}
 
 		// 异步任务数量
 		poolSize := c.Int("pool")
 		if poolSize > 0 {
-			defaultPoolSize = poolSize
+			ncmdl.DefaultPoolSize = poolSize
 		}
 
 		// 加载cookie文件
@@ -94,29 +84,29 @@ func action() cli.ActionFunc {
 			cookie = filepath.Join(dir, "ncm.txt")
 		}
 
-		cookieFile := NewCookieFile(cookie)
+		cookieFile := ncmdl.NewCookieFile(cookie)
 		// 仅显示下载信息，不进行下载
 		info := c.Bool("info")
 		// 是否下载到tmp目录
 		tmp := c.Bool("tmp")
 
 		inputLinks.ForEach(func(s string, i int) {
-			link, err := NewLink(
+			link, err := ncmdl.NewLink(
 				s,
-				LinkOptionCookieFile(cookieFile),
-				LinkOptionOnlyInfo(info),
-				LinkOptionTmp(tmp),
+				ncmdl.LinkOptionCookieFile(cookieFile),
+				ncmdl.LinkOptionOnlyInfo(info),
+				ncmdl.LinkOptionTmp(tmp),
 			)
 			if err != nil {
 				err = errors.WithMessage(err, "new link")
-				appLogger.Errorln(err)
+				ncmdl.AppLogger.Errorln(err)
 				return
 			}
 
 			err = link.Download()
 			if err != nil {
 				err = errors.WithMessage(err, "link download")
-				appLogger.Errorln(err)
+				ncmdl.AppLogger.Errorln(err)
 			}
 		})
 

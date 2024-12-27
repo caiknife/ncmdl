@@ -1,4 +1,4 @@
-package main
+package ncmdl
 
 import (
 	"net/http"
@@ -13,7 +13,7 @@ const ncmCookieFile = "./ncm.txt"
 
 func TestNewCookie(t *testing.T) {
 	cookie := NewCookieFile(ncmCookieFile)
-	appLogger.Infoln("已经加载cookies文件", ncmCookieFile)
+	AppLogger.Infoln("已经加载cookies文件", ncmCookieFile)
 	assert.False(t, cookie.IsEmpty())
 	cookie.Values.ForEach(func(cookie *http.Cookie, i int) {
 		t.Log(i, cookie)

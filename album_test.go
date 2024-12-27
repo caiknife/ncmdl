@@ -1,10 +1,12 @@
-package main
+package ncmdl
 
 import (
 	"testing"
 
 	"github.com/caiknife/mp3lister/lib/fjson"
 	"github.com/samber/lo"
+
+	"github.com/caiknife/ncmdl/v2/app"
 )
 
 const (
@@ -1182,7 +1184,7 @@ func Test_AlbumDetail_Random_Order(t *testing.T) {
 		return
 	}
 
-	detail, err := AlbumDetail(id, reqData)
+	detail, err := AlbumDetail(id, app.reqData)
 	if err != nil {
 		t.Error(err)
 		return
@@ -1193,7 +1195,7 @@ func Test_AlbumDetail_Random_Order(t *testing.T) {
 		return item.ID
 	})
 	t.Log(songIDs)
-	info, err := DownloadLink(songIDs, reqData)
+	info, err := DownloadLink(songIDs, app.reqData)
 	if err != nil {
 		t.Error(err)
 		return
@@ -1208,7 +1210,7 @@ func Test_AlbumDetail(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		detail, err := AlbumDetail(id, reqData)
+		detail, err := AlbumDetail(id, app.reqData)
 		if err != nil {
 			t.Error(err)
 			return

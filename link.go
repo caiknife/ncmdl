@@ -1,4 +1,4 @@
-package main
+package ncmdl
 
 import (
 	"path/filepath"
@@ -87,7 +87,7 @@ func (l *Link) Download() error {
 }
 
 func (l *Link) downloadSingle() error {
-	appLogger.Infoln("正在解析单曲:", l.ID)
+	AppLogger.Infoln("正在解析单曲:", l.ID)
 	detail, err := SingleDetail(l.ID, l.reqData)
 	if err != nil {
 		err = errors.WithMessage(err, "single detail")
@@ -125,14 +125,14 @@ func (l *Link) downloadDetail(detail types.Slice[*SingleInfo]) error {
 }
 
 func (l *Link) printInfo(detail types.Slice[*SingleInfo]) {
-	appLogger.Infoln("需要下载的歌曲列表:")
+	AppLogger.Infoln("需要下载的歌曲列表:")
 	detail.ForEach(func(info *SingleInfo, i int) {
-		appLogger.Infoln(info.FileName())
+		AppLogger.Infoln(info.FileName())
 	})
 }
 
 func (l *Link) downloadAlbum() error {
-	appLogger.Infoln("正在解析专辑:", l.ID)
+	AppLogger.Infoln("正在解析专辑:", l.ID)
 	detail, err := AlbumDetail(l.ID, l.reqData)
 	if err != nil {
 		err = errors.WithMessage(err, "album detail")
@@ -158,7 +158,7 @@ func (l *Link) downloadAlbum() error {
 }
 
 func (l *Link) downloadPlaylist() error {
-	appLogger.Infoln("正在解析歌单:", l.ID)
+	AppLogger.Infoln("正在解析歌单:", l.ID)
 	detail, err := PlaylistDetail(l.ID, l.reqData)
 	if err != nil {
 		err = errors.WithMessage(err, "playlist detail")

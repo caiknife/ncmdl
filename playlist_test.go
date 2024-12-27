@@ -1,9 +1,11 @@
-package main
+package ncmdl
 
 import (
 	"testing"
 
 	"github.com/caiknife/mp3lister/lib/fjson"
+
+	"github.com/caiknife/ncmdl/v2/app"
 )
 
 const (
@@ -2377,7 +2379,7 @@ func Test_PlaylistDetail(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		detail, err := PlaylistDetail(id, reqData)
+		detail, err := PlaylistDetail(id, app.reqData)
 		if err != nil {
 			t.Error(err)
 			return

@@ -1,4 +1,4 @@
-package main
+package ncmdl
 
 import (
 	"github.com/caiknife/mp3lister/lib/fjson"
