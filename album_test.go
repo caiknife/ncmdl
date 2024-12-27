@@ -3,11 +3,20 @@ package ncmdl
 import (
 	"testing"
 
+	"github.com/XiaoMengXinX/Music163Api-Go/utils"
 	"github.com/caiknife/mp3lister/lib/fjson"
 	"github.com/samber/lo"
-
-	"github.com/caiknife/ncmdl/v2/app"
 )
+
+var reqData *utils.RequestData
+var cookie *CookieFile
+
+func init() {
+	cookie = NewCookieFile(ncmCookieFile)
+	reqData = &utils.RequestData{
+		Cookies: cookie.ToHttpCookie(),
+	}
+}
 
 const (
 	albumResult = `{
@@ -1184,7 +1193,7 @@ func Test_AlbumDetail_Random_Order(t *testing.T) {
 		return
 	}
 
-	detail, err := AlbumDetail(id, app.reqData)
+	detail, err := AlbumDetail(id, reqData)
 	if err != nil {
 		t.Error(err)
 		return
@@ -1195,7 +1204,7 @@ func Test_AlbumDetail_Random_Order(t *testing.T) {
 		return item.ID
 	})
 	t.Log(songIDs)
-	info, err := DownloadLink(songIDs, app.reqData)
+	info, err := DownloadLink(songIDs, reqData)
 	if err != nil {
 		t.Error(err)
 		return
@@ -1210,7 +1219,7 @@ func Test_AlbumDetail(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		detail, err := AlbumDetail(id, app.reqData)
+		detail, err := AlbumDetail(id, reqData)
 		if err != nil {
 			t.Error(err)
 			return
