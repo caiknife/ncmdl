@@ -11,6 +11,7 @@ var (
 	albumURLs = types.Slice[string]{
 		"https://music.163.com/album?id=195093556&userid=757014",
 		"https://music.163.com/#/album?id=123837273",
+		"https://music.163.com/#/album?app_version=9.2.25&id=39362733&dlt=0846",
 	}
 
 	playlistURLs = types.Slice[string]{

@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/caiknife/mp3lister/lib/fjson"
-
-	"github.com/caiknife/ncmdl/v2/app"
 )
 
 const (
@@ -184,7 +182,7 @@ func Test_SingleDetail(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		detail, err := SingleDetail(id, app.reqData)
+		detail, err := SingleDetail(id, reqData)
 		if err != nil {
 			t.Error(err)
 			return

@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	playlistRegexp = regexp.MustCompile(`^https://music\.163\.com/(#/)?playlist\?id=(\d+)`)
-	albumRegexp    = regexp.MustCompile(`^https://music\.163\.com/(#/)?album\?id=(\d+)`)
-	singleRegexp   = regexp.MustCompile(`^https://music\.163\.com/(#/)?song\?id=(\d+)`)
+	playlistRegexp = regexp.MustCompile(`^https://music\.163\.com/(#/)?playlist\?.*id=(\d+)`)
+	albumRegexp    = regexp.MustCompile(`^https://music\.163\.com/(#/)?album\?.*id=(\d+)`)
+	singleRegexp   = regexp.MustCompile(`^https://music\.163\.com/(#/)?song\?.*id=(\d+)`)
 )
 
 func IsSingleLink(s string) bool {
