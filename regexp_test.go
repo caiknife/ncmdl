@@ -62,6 +62,7 @@ func TestSingleLinkID(t *testing.T) {
 		id, err := SingleLinkID(s)
 		assert.NoError(t, err)
 		assert.True(t, id != 0)
+		t.Log(id)
 	})
 }
 
@@ -70,6 +71,7 @@ func TestAlbumLinkID(t *testing.T) {
 		id, err := AlbumLinkID(s)
 		assert.NoError(t, err)
 		assert.True(t, id != 0)
+		t.Log(id)
 	})
 }
 
@@ -78,5 +80,6 @@ func TestPlaylistLinkID(t *testing.T) {
 		id, err := PlaylistLinkID(s)
 		assert.NoError(t, err)
 		assert.True(t, id != 0)
+		t.Log(id)
 	})
 }

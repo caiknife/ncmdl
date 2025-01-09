@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	playlistRegexp = regexp.MustCompile(`^https://music\.163\.com/(#/)?playlist\?.*id=(\d+)`)
-	albumRegexp    = regexp.MustCompile(`^https://music\.163\.com/(#/)?album\?.*id=(\d+)`)
-	singleRegexp   = regexp.MustCompile(`^https://music\.163\.com/(#/)?song\?.*id=(\d+)`)
+	playlistRegexp = regexp.MustCompile(`^https://music\.163\.com/(#/)?playlist\?([\w_]+=[\w.]+&)*id=(\d+)`)
+	albumRegexp    = regexp.MustCompile(`^https://music\.163\.com/(#/)?album\?([\w_]+=[\w.]+&)*id=(\d+)`)
+	singleRegexp   = regexp.MustCompile(`^https://music\.163\.com/(#/)?song\?([\w_]+=[\w.]+&)*id=(\d+)`)
 )
 
 func IsSingleLink(s string) bool {
@@ -22,7 +22,7 @@ func SingleLinkID(s string) (int, error) {
 	if submatch.IsEmpty() {
 		return 0, ErrCannotFindSingleID
 	}
-	return cast.ToInt(submatch[2]), nil
+	return cast.ToInt(submatch[3]), nil
 }
 
 func IsAlbumLink(s string) bool {
@@ -34,7 +34,7 @@ func AlbumLinkID(s string) (int, error) {
 	if submatch.IsEmpty() {
 		return 0, ErrCannotFindAlbumID
 	}
-	return cast.ToInt(submatch[2]), nil
+	return cast.ToInt(submatch[3]), nil
 }
 
 func IsPlaylistLink(s string) bool {
@@ -46,5 +46,5 @@ func PlaylistLinkID(s string) (int, error) {
 	if submatch.IsEmpty() {
 		return 0, ErrCannotFindPlaylistID
 	}
-	return cast.ToInt(submatch[2]), nil
+	return cast.ToInt(submatch[3]), nil
 }
